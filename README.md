@@ -77,10 +77,10 @@ notification.device_token = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 Then using our `PushKit::APNS` instance we created earlier, deliver the notification:
 
 ```ruby
-apns.deliver(notification)
+client.deliver(notification) do |notification, success, response|
+  # ...
+end
 ```
-
-EXPLAIN_ASYNC_NEEDS_WAIT
 
 ---
 
@@ -106,7 +106,7 @@ notifications = notification.for_tokens(*tokens)
 When you're ready, you can just deliver the array of notifications:
 
 ```ruby
-client.deliver(notifications) do |notification, result|
+client.deliver(*notifications) do |notification, success, response|
   # ...
 end
 ```
