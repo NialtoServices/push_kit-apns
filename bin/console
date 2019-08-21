@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'push_kit/apns'
+require 'irb'
+
+IRB.start
