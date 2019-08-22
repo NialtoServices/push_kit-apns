@@ -26,6 +26,7 @@ module PushKit
     # @return      [OpenSSL::PKey::EC] The loaded key.
     #
     def self.load_key(path)
+      raise ArgumentError, 'The :key must be a String'            unless path.is_a?(String)
       raise ArgumentError, "The key file does not exist: #{path}" unless File.file?(path)
 
       OpenSSL::PKey::EC.new(File.read(path))
