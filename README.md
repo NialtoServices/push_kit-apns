@@ -38,6 +38,26 @@ This allows us to maintain a connection to the Apple Push Notification service a
 
 See [Communicating with APNs - Best Practices for Managing Connections](https://developer.apple.com/library/content/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/CommunicatingwithAPNs.html#//apple_ref/doc/uid/TP40008194-CH11-SW8) for more info on this.
 
+---
+
+PushKit also provides a couple of convenience helper methods to create and store clients for use anywhere the PushKit::APNS model is accessible.
+
+For example, in a Rails app you could create an initializer and add the following:
+
+```ruby
+PushKit::APNS.prepare(
+  :default,
+  key: PushKit::APNS.load_key('/path/to/APNsAuthKey_XXXXXXXXXX.p8'),
+  key_id: 'XXXXXXXXXX',
+  team_id: 'XXXXXXXXXX',
+  topic: 'com.example.app'
+)
+```
+
+Later, when you're ready to send a notification you can use ```PushKit::APNS.clients[:default]``` to retrieve the client instance.
+
+You can specify any arbitrary value as the key instead of *:default* which allows you to create multiple instance if required.
+
 ### Additional Options
 
 There are a few additional options you can specify when creating a client.
