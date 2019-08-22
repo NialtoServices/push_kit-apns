@@ -3,7 +3,7 @@
 require 'push_kit/apns/notification/localization'
 
 RSpec.describe PushKit::APNS::Notification::Localization, :unit do
-  def localization(params = {})
+  def build(params = {})
     default_params = {
       key: 'HELLO_WORLD',
       arguments: nil
@@ -12,16 +12,16 @@ RSpec.describe PushKit::APNS::Notification::Localization, :unit do
     described_class.new(**default_params.merge(params))
   end
 
-  subject { localization }
+  subject(:localization) { build }
 
   it { is_expected.to have_accessor(:key) }
   it { is_expected.to have_accessor(:arguments) }
 
   describe '#initialize' do
     let(:key)       { 'A_KEY' }
-    let(:arguments) { ['An Argument'] }
+    let(:arguments) { ['An argument'] }
 
-    subject { localization(key: key, arguments: arguments) }
+    subject { build(key: key, arguments: arguments) }
 
     it 'sets #key' do
       expect(subject.key).to eq(key)
@@ -34,56 +34,67 @@ RSpec.describe PushKit::APNS::Notification::Localization, :unit do
 
   describe '#payload' do
     context 'when localizing a supported attribute' do
-      let(:payload) { subject.payload(:title) }
+      subject { localization.payload(:title) }
 
-      it 'includes #key as the prefixed loc-key attribute' do
-        subject.key = 'TITLE_KEY'
-        expect(payload).to include('title-loc-key' => 'TITLE_KEY')
+      context 'when #key is set' do
+        before { localization.key = 'TITLE_KEY' }
+
+        it 'includes the correct loc-key attribute and value' do
+          expect(subject).to include('title-loc-key' => 'TITLE_KEY')
+        end
       end
 
-      it 'includes #arguments as the prefixed loc-args attribute' do
-        subject.arguments = ['An Argument']
-        expect(payload).to include('title-loc-args' => ['An Argument'])
+      context 'when #arguments is set' do
+        before { localization.arguments = ['An argument'] }
+
+        it 'includes the correct loc-args attribute and value' do
+          expect(subject).to include('title-loc-args' => ['An argument'])
+        end
       end
 
-      context 'without #arguments' do
-        before { subject.arguments = nil }
+      context 'when #arguments is nil' do
+        before { localization.arguments = nil }
 
-        it 'excludes the prefixed loc-args attribute' do
-          expect(payload).not_to have_key('title-loc-args')
+        it 'excludes the correct loc-args attribute' do
+          expect(subject).not_to have_key('title-loc-args')
         end
       end
     end
 
     context 'when localizing an unsupported attribute' do
-      let(:attribute) { :some_unknown_attribute }
-      let(:payload)   { subject.payload(attribute) }
+      subject { localization.payload(:some_unknown_attribute) }
 
       it 'returns nil' do
-        expect(payload).to be_nil
+        expect(subject).to be nil
       end
     end
   end
 
   describe '#prefix' do
+    def self.it_returns(prefix, with: nil)
+      context "with :#{with}" do
+        subject { prefix(with) }
+
+        it "returns '#{prefix}'" do
+          expect(subject).to eq(prefix)
+        end
+      end
+    end
+
     def prefix(*args)
-      subject.instance_eval { prefix(*args) }
+      localization.instance_eval { prefix(*args) }
     end
 
-    it "returns 'title-' for :title" do
-      expect(prefix(:title)).to eq('title-')
-    end
+    it_returns 'title-',    with: :title
+    it_returns 'subtitle-', with: :subtitle
+    it_returns '',          with: :body
 
-    it "returns 'subtitle-' for :subtitle" do
-      expect(prefix(:subtitle)).to eq('subtitle-')
-    end
+    context 'with an unknown attribute' do
+      subject { prefix(:some_unknown_attribute) }
 
-    it "returns '' for :body" do
-      expect(prefix(:body)).to eq('')
-    end
-
-    it 'returns nil for an unknown attribute' do
-      expect(prefix(:some_unknown_attribute)).to be_nil
+      it 'returns nil' do
+        expect(subject).to be nil
+      end
     end
   end
 end
