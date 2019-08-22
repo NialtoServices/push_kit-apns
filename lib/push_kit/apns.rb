@@ -33,14 +33,15 @@ module PushKit
 
     # Create a new PushClient instance.
     #
-    # @param options [Hash]              The APNS options:
-    #        host    [String|Symbol]     The host (can also be :production or :development).
-    #        port    [Integer|Symbol]    The port number (can also be :default or :alternative).
-    #        topic   [String]            The APNS topic (matches the app's bundle identifier).
-    #        key     [OpenSSL::PKey::EC] The elliptic curve key to use for authentication.
-    #        key_id  [String]            The identifier for the elliptic curve key.
-    #        team_id [String]            The identifier for the Apple Developer team.
-    #        topic   [String]            The topic for your application (usually the bundle identifier).
+    # @param  options [Hash]
+    #         host    [String|Symbol]             The host (can also be :production or :development).
+    #         port    [Integer|Symbol]            The port number (can also be :default or :alternative).
+    #         topic   [String]                    The APNS topic (matches the app's bundle identifier).
+    #         key     [OpenSSL::PKey::EC]         The elliptic curve key to use for authentication.
+    #         key_id  [String]                    The identifier for the elliptic curve key.
+    #         team_id [String]                    The identifier for the Apple Developer team.
+    #         topic   [String]                    The topic for your application (usually the bundle identifier).
+    # @return         [PushKit::APNS::PushClient] A client.
     #
     def self.client(options = {})
       options = {
@@ -60,6 +61,25 @@ module PushKit
         topic: options[:topic],
         token_generator: token_generator
       )
+    end
+
+    # @return [Hash] A collection of `PushKit::APNS::PushClient` instances.
+    #
+    def self.clients
+      @clients ||= {}
+    end
+
+    # Prepare a client.
+    #
+    # This method creates a `PushKit::APNS::PushClient` instance using the #client method, then stores it in the
+    # #clients Hash using an identifier you specify.
+    # Storing the clients in this way provides on-demand access without requiring the use of global variables.
+    #
+    # @param identifier [Symbol] The key to use within the #clients Hash.
+    # @param options    [Hash]   The options to pass to the #client method.
+    #
+    def self.prepare(identifier, options = {})
+      clients[identifier] = client(options)
     end
   end
 end
