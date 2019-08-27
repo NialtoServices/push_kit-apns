@@ -185,7 +185,7 @@ RSpec.describe PushKit::APNS::Notification, :unit do
 
     it 'includes #content_available when truthy' do
       subject.content_available = true
-      expect(payload_aps).to include('content-available' => '1')
+      expect(payload_aps).to include('content-available' => 1)
     end
 
     it 'excludes #content_available when falsey' do
@@ -195,7 +195,7 @@ RSpec.describe PushKit::APNS::Notification, :unit do
 
     it 'includes #mutable_content when truthy' do
       subject.mutable_content = true
-      expect(payload_aps).to include('mutable-content' => '1')
+      expect(payload_aps).to include('mutable-content' => 1)
     end
 
     it 'excludes #mutable_content when falsey' do
