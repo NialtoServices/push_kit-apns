@@ -183,6 +183,11 @@ RSpec.describe PushKit::APNS::Notification, :unit do
       expect(payload_aps).to include('category' => 'GENERAL')
     end
 
+    it 'converts #category into a String given a Symbol' do
+      subject.category = :generic
+      expect(payload_aps).to include('category' => 'generic')
+    end
+
     it 'includes #content_available when truthy' do
       subject.content_available = true
       expect(payload_aps).to include('content-available' => 1)
@@ -226,6 +231,11 @@ RSpec.describe PushKit::APNS::Notification, :unit do
 
     it 'includes #action_key' do
       subject.action_key = 'ACTION_TITLE'
+      expect(payload_alert).to include('action-loc-key' => 'ACTION_TITLE')
+    end
+
+    it 'converts #action_key into a String given a Symbol' do
+      subject.action_key = :ACTION_TITLE
       expect(payload_alert).to include('action-loc-key' => 'ACTION_TITLE')
     end
 
