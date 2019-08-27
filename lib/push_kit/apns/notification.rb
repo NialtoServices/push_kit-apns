@@ -223,11 +223,11 @@ module PushKit
           aps['alert'] = alert
         end
 
-        aps['badge'] = badge           if badge.is_a?(Integer)
-        aps['sound'] = sound.to_s      if sound.is_a?(String) || sound.is_a?(Symbol)
-        aps['category'] = category     if category.is_a?(String)
-        aps['content-available'] = '1' if content_available
-        aps['mutable-content'] = '1'   if mutable_content
+        aps['badge'] = badge         if badge.is_a?(Integer)
+        aps['sound'] = sound.to_s    if sound.is_a?(String) || sound.is_a?(Symbol)
+        aps['category'] = category   if category.is_a?(String)
+        aps['content-available'] = 1 if content_available
+        aps['mutable-content'] = 1   if mutable_content
 
         aps
       end
